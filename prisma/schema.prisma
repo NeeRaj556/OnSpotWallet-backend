@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String            @id @default(uuid())
+  name              String
+  email             String            @unique
+  password          String
+  role              String            @default("user")
+  address           String
+  phone             String
+  profilePicture    String?
+  createdAt         DateTime          @default(now()) @map("created_at")
+  latitude          Float?
+  longitude         Float?
+  locationUpdatedAt DateTime?
+  deletedAt         DateTime?
+   updatedAt         DateTime          @default(now())
+}
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
