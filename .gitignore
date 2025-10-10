@@ -31,3 +31,5 @@ prisma/*.sqlite
 Thumbs.db
 *.swp
 *.swo
+
+/uploads
