@@ -8,32 +8,47 @@ datasource db {
 }
 
 model User {
-  id                String            @id @default(uuid())
-  name              String
-  email             String            @unique
-  password          String
-  role              String            @default("user")
-  address           String
-  phone             String
-  profilePicture    String?
-  createdAt         DateTime          @default(now()) @map("created_at")
-  latitude          Float?
-  longitude         Float?
-  locationUpdatedAt DateTime?
-  deletedAt         DateTime?
-   updatedAt         DateTime          @default(now())
+  id                   String        @id @default(uuid())
+  name                 String
+  role                 String       @default("user")
+  email                String        @unique
+  password             String
+  address              String?
+  phone                String
+  profilePicture       String?
+  createdAt            DateTime      @default(now()) @map("created_at")
+  latitude             Float?
+  longitude            Float?
+  locationUpdatedAt    DateTime?
+  deletedAt            DateTime?
+  updatedAt            DateTime      @default(now())
+  type                 String?
+  currency String @default("$")
+  balance  Float  @default(0)
+  sentTransactions     Transaction[] @relation("TransactionSender")
+  receivedTransactions Transaction[] @relation("TransactionReceiver")
+  updatedTransactions  Transaction[] @relation("TransactionUpdater")
 }
 
+model Transaction {
+  id           String          @id @default(uuid())
+  senderId     String
+  receiverId   String
+  sender       User            @relation("TransactionSender", fields: [senderId], references: [id])
+  receiver     User            @relation("TransactionReceiver", fields: [receiverId], references: [id])
+  latitude     Float?
+  longitude    Float?
+  receivedAt   DateTime?
+  sentAt       DateTime?
+  transactedAt DateTime?
+  mode         TransactionMode
+  updatedBy    String?
+  updatingUser User?           @relation("TransactionUpdater", fields: [updatedBy], references: [id])
+}
 
- 
+enum TransactionMode {
+  offline
+  online
+}
 
- 
-
- 
-
- 
-
- 
-
- 
  

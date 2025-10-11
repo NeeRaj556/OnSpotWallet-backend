@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
-const prisma = require("../utils/prisma");
-const generateToken = require("../utils/jwt");
+const prisma = require("../../utils/prisma");
+const generateToken =require("../../utils/prisma");
 
 // @desc    Register a new user
 // @route   POST /api/auth/register

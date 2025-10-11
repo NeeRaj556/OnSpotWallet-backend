@@ -2,13 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const authRoutes = require("./auth.routes");
-const adminRoutes = require("./admin.routes");
-const staffRoutes = require("./staff.routes");
-const securityRoutes = require("./security.routes");
-const attendanceRoutes = require("./attendance.routes");
-const adminSecurityRoutes = require("./admin/security.routes");
-// const blockPostman = require("../middleware/postman.middleware");
-const signatureGuard = require("../middleware/signature.middleware");
+
 
 module.exports = (app) => {
   app.use(express.json());
