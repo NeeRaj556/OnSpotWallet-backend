@@ -138,40 +138,40 @@ function setupServer() {
   setupSwagger(app);
 
   // Serve frontend static files
-  const frontendDistPath = path.join(__dirname, "frontend", "dist");
-  app.use(express.static(frontendDistPath));
+  // const frontendDistPath = path.join(__dirname, "frontend", "dist");
+  // app.use(express.static(frontendDistPath));
 
   // Handle SPA routing - serve index.html for all non-API routes
-  app.get("*", (req, res, next) => {
-    // Skip API routes and static files
-    if (
-      req.path.startsWith("/api") ||
-      req.path.startsWith("/storage") ||
-      req.path.startsWith("/uploads") ||
-      req.path.includes(".")
-    ) {
-      return next();
-    }
+  // app.get("*", (req, res, next) => {
+  //   // Skip API routes and static files
+  //   if (
+  //     req.path.startsWith("/api") ||
+  //     req.path.startsWith("/storage") ||
+  //     req.path.startsWith("/uploads") ||
+  //     req.path.includes(".")
+  //   ) {
+  //     return next();
+  //   }
 
-    // Serve index.html for all other routes
-    res.sendFile(path.join(frontendDistPath, "index.html"), (err) => {
-      if (err) {
-        console.error("Error serving index.html:", err);
-        res
-          .status(404)
-          .send(
-            "Frontend not built. Please run 'npm run build:frontend' first."
-          );
-      }
-    });
-  });
+  //   // Serve index.html for all other routes
+  //   res.sendFile(path.join(frontendDistPath, "index.html"), (err) => {
+  //     if (err) {
+  //       console.error("Error serving index.html:", err);
+  //       res
+  //         .status(404)
+  //         .send(
+  //           "Frontend not built. Please run 'npm run build:frontend' first."
+  //         );
+  //     }
+  //   });
+  // });
 
   // Error handling middleware
   app.use(notFound);
   app.use(errorHandler);
 
-  require("./utils/checkInReminderScheduler");
-  require("./utils/autoCheckoutScheduler");
+  // require("./utils/checkInReminderScheduler");
+  // require("./utils/autoCheckoutScheduler");
 
   server.listen(PORT, () =>
     console.log(`Listening on port ${PORT} \nURL: http://localhost:${PORT}`)

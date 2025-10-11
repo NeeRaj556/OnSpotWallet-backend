@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 const prisma = require("../../utils/prisma");
-const generateToken =require("../../utils/prisma");
+const generateToken = require("../../utils/jwt");
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
@@ -34,7 +34,9 @@ const registerUser = asyncHandler(async (req, res) => {
       name,
       email,
       password: hashedPassword,
-    },
+      phone:phone,
+      address:address,
+     },
     select: {
       id: true,
       name: true,
@@ -99,11 +101,12 @@ const loginUser = asyncHandler(async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        position : user.position || null, // Ensure position is nullable
+        balance : user.balance || 0, // Ensure position is nullable
+        currency : user.currency || null, // Ensure position is nullable
         createdAt: user.createdAt,
         profilePicture: user.profilePicture || null,
         address: user.address || null,
-        phoneNumber: user.phoneNumber || null,
+        phone: user.phone || null,
       },
       //   loginLocation,
       token: generateToken(user.id),
@@ -115,8 +118,7 @@ const loginUser = asyncHandler(async (req, res) => {
 // @route   GET /api/auth/me
 // @access  Private
 const getMe = asyncHandler(async (req, res) => {
-  // req.user was set in the auth middleware
-  res.status(200).json({
+   res.status(200).json({
     message: "User profile",
     data: req.user,
   });
