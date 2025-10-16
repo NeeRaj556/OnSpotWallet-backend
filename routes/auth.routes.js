@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { registerUser, loginUser } = require('../controllers/auth/auth.controller');
+const { registerUser, loginUser,UpdatePin } = require('../controllers/auth/auth.controller');
 
 /**
  * @route POST /api/auth/register
@@ -8,7 +8,7 @@ const { registerUser, loginUser } = require('../controllers/auth/auth.controller
  * @body {name, email, password}
  */
 router.post('/register', registerUser);
-/**
+ /**
  * @route POST /api/auth/login
  * @desc Login a user and get token
  * @access Public

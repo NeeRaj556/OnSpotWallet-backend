@@ -24,7 +24,13 @@ model User {
   updatedAt            DateTime      @default(now())
   type                 String?
   currency String @default("$")
-  balance  Float  @default(0)
+  balance  Float   @default(0)
+  prefferedOfflineBalance Float @default(0)
+  pin     Int?          
+  onlineLimit Float @default(1000)
+  offlineLimit Float @default(10)
+  onlineBalance Float @default(0)
+  offlineBalance Float @default(0)
   sentTransactions     Transaction[] @relation("TransactionSender")
   receivedTransactions Transaction[] @relation("TransactionReceiver")
   updatedTransactions  Transaction[] @relation("TransactionUpdater")

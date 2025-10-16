@@ -14,7 +14,11 @@ async function main() {
       address: "Panauti",
       phone: "9800000000",
       profilePicture: null,
+      onlineLimit:10,
+      offlineLimit:1000,
       balance: 1000,
+      onlineBalance: 990,
+      offlineBalance: 10,
       currency: "$",
     },
     {
@@ -26,6 +30,11 @@ async function main() {
       phone: "9812345678",
       profilePicture: null,
       balance: 1000,
+      onlineLimit:10,
+      offlineLimit:1000,
+      balance: 1000,
+      onlineBalance: 990,
+      offlineBalance: 10,
       currency: "$",
     },
     {
@@ -33,21 +42,29 @@ async function main() {
       email: "neeraj@gmail.com",
       role:"user",
       password: await bcrypt.hash("neeraj123", 10),
-       address: "Dhapakhel",
+      address: "Dhapakhel",
       phone: "9849541785",
       profilePicture: null,
+      onlineLimit:10,
+      offlineLimit:1000,
       balance: 1000,
+      onlineBalance: 990,
+      offlineBalance: 10,
       currency: "$",
     },
     {
       name: "onSpotWallet",
       email: "onspot@gmail.com",
-      role:"user",
+      role:"admin",
       password: await bcrypt.hash("onspot123", 10),
       address: "Dhapakhel",
       phone: "9849541785",
       profilePicture: null,
+      onlineLimit:10,
+      offlineLimit:1000,
       balance: 1000,
+      onlineBalance: 990,
+      offlineBalance: 10,
       currency: "$",
     },
   ];
@@ -62,17 +79,20 @@ async function main() {
         name: user.name,
         email: user.email,
         password: user.password,
+        role: user.role,
         address: user.address,
         phone: user.phone,
-        balance: user.balance,
-        currency:user.currency,
         profilePicture: user.profilePicture,
+        onlineLimit: user.onlineLimit,
+        offlineLimit: user.offlineLimit,
+        balance: user.balance,
+        onlineBalance: user.onlineBalance,
+        offlineBalance: user.offlineBalance,
+        currency: user.currency,
       },
     });
   }
 
-   
- 
  
 }
 
