@@ -23,17 +23,30 @@ model User {
   deletedAt            DateTime?
   updatedAt            DateTime      @default(now())
   type                 String?
-  currency String @default("$")
-  balance  Float   @default(0)
-  prefferedOfflineBalance Float @default(0)
-  pin     Int?          
-  onlineLimit Float @default(1000)
-  offlineLimit Float @default(10)
-  onlineBalance Float @default(0)
-  offlineBalance Float @default(0)
+  currency             String        @default("$")
+  balance              Float         @default(0)
+  preferredOfflineBalance Float     @default(0)
+  pin                 Int?          
+  onlineLimit        Float          @default(1000)
+  offlineLimit       Float          @default(10)
+  onlineBalance      Float          @default(0)
+  offlineBalance     Float          @default(0)
   sentTransactions     Transaction[] @relation("TransactionSender")
   receivedTransactions Transaction[] @relation("TransactionReceiver")
   updatedTransactions  Transaction[] @relation("TransactionUpdater")
+  otp                  Otp?        @relation("userOtp")
+  isVerified           Boolean     @default(false)
+}
+model Otp {
+  id                String        @id @default(uuid())
+  pin               String        // hashed OTP
+  expiryAt          DateTime
+  attempts          Int           @default(0) // verification attempt count
+  resendCount       Int           @default(0) // number of times OTP was resent
+  lastSentAt        DateTime?
+  lastAttemptAt     DateTime?
+  user              User          @relation("userOtp", fields: [userId], references: [id])
+  userId            String        @unique
 }
 
 model Transaction {
