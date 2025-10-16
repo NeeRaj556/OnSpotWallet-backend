@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { registerUser, loginUser,UpdatePin } = require('../controllers/auth/auth.controller');
+const { registerUser, loginUser, UpdatePin, verifyOtp, resendOtp } = require('../controllers/auth/auth.controller');
 
 /**
  * @route POST /api/auth/register
@@ -15,5 +15,14 @@ router.post('/register', registerUser);
  * @body {email, password}
  */
 router.post('/login', loginUser);
+
+/**
+ * @route POST /api/auth/verify
+ * @desc Verify OTP sent to email
+ * @access Public
+ * @body {email, otp}
+ */
+router.post('/verify', verifyOtp);
+router.post('/resend-otp', resendOtp);
 
 module.exports = router;
