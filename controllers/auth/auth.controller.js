@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
-const prisma = require("../utils/prisma");
-const generateToken = require("../utils/jwt");
+const prisma = require("../../utils/prisma");
+const generateToken = require("../../utils/jwt");
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
@@ -34,7 +34,9 @@ const registerUser = asyncHandler(async (req, res) => {
       name,
       email,
       password: hashedPassword,
-    },
+      phone:phone,
+      address:address,
+     },
     select: {
       id: true,
       name: true,
@@ -56,6 +58,88 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Invalid user data");
   }
+});
+
+const UpdatePin = asyncHandler(async (req, res) => {
+  const { pin, oldPin, newPin, confirmNewPin } = req.body;
+
+  const user = await prisma.user.findUnique({
+    where: { id: req.user.id },
+  });
+
+  if (!user) {
+    res.status(401);
+    throw new Error("Invalid user");
+  }
+
+  // Helper: validate 4-digit numeric PIN
+  const validPin = (p) => typeof p === "string" && /^\d{4}$/.test(p);
+
+   if (user.pin == null) {
+    const providedPin = pin || newPin;
+    if (!validPin(providedPin)) {
+      res.status(400);
+      throw new Error("Please provide a valid 4-digit PIN to set");
+    }
+
+    const hashedPin = await bcrypt.hash(providedPin, 10);
+    await prisma.user.update({
+      where: { id: req.user.id },
+      data: { pin: hashedPin },
+    });
+
+    return res.status(201).json({ message: "PIN set successfully" });
+  }
+
+  // Otherwise require oldPin, newPin and confirmNewPin to update
+  if (!validPin(oldPin) || !validPin(newPin) || !validPin(confirmNewPin)) {
+    res.status(400);
+    throw new Error("Old, new and confirm PIN must be 4-digit numbers");
+  }
+
+  if (newPin !== confirmNewPin) {
+    res.status(400);
+    throw new Error("New PIN and confirm PIN do not match");
+  }
+
+  const isMatch = await bcrypt.compare(oldPin, user.pin);
+  if (!isMatch) {
+    res.status(401);
+    throw new Error("Old PIN is incorrect");
+  }
+
+  const hashedNewPin = await bcrypt.hash(newPin, 10);
+  await prisma.user.update({
+    where: { id: req.user.id },
+    data: { pin: hashedNewPin },
+  });
+
+  res.status(200).json({ message: "PIN updated successfully" });
+});
+
+const updatePreferredOffPrice = asyncHandler(async (req, res) => {
+  const { preferredOfflineBalance } = req.body;
+
+  const user = await prisma.user.findUnique({
+    where: { id: req.user.id },
+  });
+
+  if (!user) {
+    res.status(401);
+    throw new Error("Invalid user");
+  }
+
+  if (typeof preferredOfflineBalance !== "number" || preferredOfflineBalance < 0) {
+    res.status(400);
+    throw new Error("Please provide a valid preferred offline balance");
+  }
+
+  await prisma.user.update({
+    where: { id: req.user.id },
+    data: { preferredOfflineBalance },
+  });
+
+  res.status(200).json({ message: "Preferred offline balance updated successfully" });
 });
 
 // @desc    Authenticate a user
@@ -99,11 +183,12 @@ const loginUser = asyncHandler(async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        position : user.position || null, // Ensure position is nullable
+        balance : user.balance || 0, // Ensure position is nullable
+        currency : user.currency || null, // Ensure position is nullable
         createdAt: user.createdAt,
         profilePicture: user.profilePicture || null,
         address: user.address || null,
-        phoneNumber: user.phoneNumber || null,
+        phone: user.phone || null,
       },
       //   loginLocation,
       token: generateToken(user.id),
@@ -115,8 +200,7 @@ const loginUser = asyncHandler(async (req, res) => {
 // @route   GET /api/auth/me
 // @access  Private
 const getMe = asyncHandler(async (req, res) => {
-  // req.user was set in the auth middleware
-  res.status(200).json({
+   res.status(200).json({
     message: "User profile",
     data: req.user,
   });
@@ -144,6 +228,12 @@ const getUsers = asyncHandler(async (req, res) => {
         address: true,
         phone: true,
         profilePicture: true,
+        onlineBalance:true,
+        offlineBalance:true,
+        balance:true,
+        currency:true,
+        onlineLimit:true,
+        offlineBalance:true,
         createdAt: true,
         _count: {
           select: {
@@ -179,5 +269,7 @@ module.exports = {
   registerUser,
   loginUser,
   getMe,
-  getUsers, // Add this new export
+  getUsers, 
+  UpdatePin,
+  updatePreferredOffPrice,
 };

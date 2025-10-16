@@ -7,22 +7,65 @@ async function main() {
   // Static users to seed
   const users = [
     {
-      name: "Admin User",
-      email: "admin@example.com",
-      password: await bcrypt.hash("admin123", 10),
-      role: "admin",
-      address: "123 Admin St, Admin City, AD 12345",
-      phone: "123-456-7890",
+      name: "Sangram Thapa",
+      email: "sangram@gmail.com",
+      role:"user",
+      password: await bcrypt.hash("sangram12345", 10),
+      address: "Panauti",
+      phone: "9800000000",
       profilePicture: null,
+      onlineLimit:10,
+      offlineLimit:1000,
+      balance: 1000,
+      onlineBalance: 990,
+      offlineBalance: 10,
+      currency: "$",
     },
     {
-      name: "Staff User",
-      email: "staff@example.com",
-      password: await bcrypt.hash("staff123", 10),
-      role: "staff",
-      address: "456 Staff Rd, Staff City, ST 67890",
-      phone: "987-654-3210",
+      name: "Mohan Krishna",
+      email: "mohan@example.com",
+      role:"user",
+      password: await bcrypt.hash("mohankrishna123", 10),
+       address: "Bhakundebesi",
+      phone: "9812345678",
       profilePicture: null,
+      balance: 1000,
+      onlineLimit:10,
+      offlineLimit:1000,
+      balance: 1000,
+      onlineBalance: 990,
+      offlineBalance: 10,
+      currency: "$",
+    },
+    {
+      name: "NeeRaj",
+      email: "neeraj@gmail.com",
+      role:"user",
+      password: await bcrypt.hash("neeraj123", 10),
+      address: "Dhapakhel",
+      phone: "9849541785",
+      profilePicture: null,
+      onlineLimit:10,
+      offlineLimit:1000,
+      balance: 1000,
+      onlineBalance: 990,
+      offlineBalance: 10,
+      currency: "$",
+    },
+    {
+      name: "onSpotWallet",
+      email: "onspot@gmail.com",
+      role:"admin",
+      password: await bcrypt.hash("onspot123", 10),
+      address: "Dhapakhel",
+      phone: "9849541785",
+      profilePicture: null,
+      onlineLimit:10,
+      offlineLimit:1000,
+      balance: 1000,
+      onlineBalance: 990,
+      offlineBalance: 10,
+      currency: "$",
     },
   ];
 
@@ -40,61 +83,17 @@ async function main() {
         address: user.address,
         phone: user.phone,
         profilePicture: user.profilePicture,
+        onlineLimit: user.onlineLimit,
+        offlineLimit: user.offlineLimit,
+        balance: user.balance,
+        onlineBalance: user.onlineBalance,
+        offlineBalance: user.offlineBalance,
+        currency: user.currency,
       },
     });
   }
 
-  // Seed attendance times if not present
-  const attendanceTimes = await prisma.attendanceTimes.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
-      id: 1,
-      checkInTime: "09:00:00",
-      checkOutTime: "17:00:00",
-    },
-  });
-
-  // Seed API settings
-  const apiSettings = [
-    {
-      key: "API_SECURITY_ENABLED",
-      value: process.env.NODE_ENV === "production" ? "true" : "false",
-      description: "Enable or disable API signature verification",
-      isEditable: true,
-    },
-    {
-      key: "ALLOWED_BOOTSTRAP_TOKENS",
-      value: "react,flutter,web,mobile",
-      description: "Comma-separated list of valid bootstrap tokens",
-      isEditable: true,
-    },
-    {
-      key: "CORS_DOMAINS",
-      value: process.env.FRONTEND_URL || "*",
-      description: "Allowed CORS domains (comma-separated, or * for all)",
-      isEditable: true,
-    },
-    {
-      key: "SIGNATURE_TIME_WINDOW",
-      value: "30000",
-      description: "Time window in milliseconds for signature validity",
-      isEditable: true,
-    },
-  ];
-
-  for (const setting of apiSettings) {
-    await prisma.apiSetting.upsert({
-      where: { key: setting.key },
-      update: {},
-      create: {
-        key: setting.key,
-        value: setting.value,
-        description: setting.description,
-        isEditable: setting.isEditable,
-      },
-    });
-  }
+ 
 }
 
 main()
