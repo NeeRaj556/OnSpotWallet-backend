@@ -207,11 +207,12 @@ const loginUser = asyncHandler(async (req, res) => {
   if (!user.isVerified) {
     const otpValue = generateOtp(6);
     const expiryAt = new Date(Date.now() + (parseInt(process.env.OTP_EXPIRY_MIN || '5') * 60 * 1000));
+    const hashedOtp = await bcrypt.hash(otpValue.toString(), 10);
 
     await prisma.otp.upsert({
       where: { userId: user.id },
-      update: { pin: otpValue, expiryAt },
-      create: { pin: otpValue, expiryAt, userId: user.id },
+      update: { pin: hashedOtp, expiryAt, lastSentAt: new Date(), resendCount: { increment: 1 } },
+      create: { pin: hashedOtp, expiryAt, userId: user.id, lastSentAt: new Date(), resendCount: 0 },
     });
 
     try {
@@ -365,9 +366,38 @@ const resendOtp = asyncHandler(async (req, res) => {
 // @route   GET /api/auth/me
 // @access  Private
 const getMe = asyncHandler(async (req, res) => {
-   res.status(200).json({
+  // Fetch full user details including wallet/balance fields
+  const user = await prisma.user.findUnique({
+    where: { id: req.user.id },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      phone: true,
+      address: true,
+      profilePicture: true,
+      currency: true,
+      balance: true,
+      preferredOfflineBalance: true,
+      onlineLimit: true,
+      offlineLimit: true,
+      onlineBalance: true,
+      offlineBalance: true,
+      isVerified: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  res.status(200).json({
     message: "User profile",
-    data: req.user,
+    data: user,
   });
 });
 
